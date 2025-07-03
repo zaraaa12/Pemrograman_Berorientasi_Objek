@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Expense Tracker</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h2>Daily Expense Tracker</h2>
+        <div class="controls">
+          <button class="add-btn"><i class="fas fa-plus"></i></button>
+          <div class="toggle-group">
+            <a href="income.html"><button class="toggle">INCOME</button></a>
+            <button class="toggle active">EXPENSE</button>
+          </div>
+        </div>
+      </header>
+
+      <section class="balance-card">
+        <h3>Total Balance</h3>
+        <h1 id="totalBalance">$0.00</h1>
+        <div class="summary">
+          <p class="income"><i class="fas fa-arrow-up"></i> $0.00</p>
+          <p class="expense"><i class="fas fa-arrow-down"></i> $0.00</p>
+        </div>
+      </section>
+
+      <section id="transactionList"></section>
+    </div>
+
+    <div id="modalContainer"></div>
+    <div id="modaleditContainer"></div>
+
+    <script>
+      console.log("Memulai eksekusi script...");
+
+      const promise1 = fetch("modal.html");
+      const promise2 = fetch("modal-edit.html");
+
+      Promise.all([promise1, promise2])
+        .then((responses) => {
+          for (const response of responses) {
+            if (!response.ok) {
+              throw new Error(
+                `Gagal fetch: ${response.url} - ${response.statusText}`
+              );
+            }
+          }
+          return Promise.all(responses.map((res) => res.text()));
+        })
+        .then(([modalHtml, modalEditHtml]) => {
+          console.log("SUKSES: Kedua fetch berhasil dan konten didapatkan.");
+
+          document.getElementById("modalContainer").innerHTML = modalHtml;
+          document.getElementById("modaleditContainer").innerHTML =
+            modalEditHtml;
+
+          console.log("SUKSES: Modal telah dimasukkan ke dalam DOM.");
+
+          initExpenseModal(); // Inisialisasi modal tambah
+          initEditModal(); // Inisialisasi modal edit
+          loadTransactions(); // Muat data setelah semuanya siap
+        })
+        .catch((error) => {
+          console.error("--- TERJADI ERROR PADA PROMISE ---", error);
+        });
+    </script>
+    <script src="js/expense.js"></script>
+  </body>
+</html>
